@@ -7,3 +7,9 @@ app_router = APIRouter()
 
 app_router.include_router(prices_router, prefix="/prices", tags=["prices"])
 app_router.include_router(equities_router, prefix="/equities", tags=["equities"])
+
+
+@app_router.get("/health")
+def health_check():
+    """Return the status of the application"""
+    return {"status": "ok"}

@@ -20,9 +20,6 @@ def get_stocks(
     pagination_params: Annotated[PaginationParams, Depends()],
     sorting_params: Annotated[SortParams, Depends()],
 ):
-    print(filter_params)
-    print(pagination_params)
-    print(sorting_params)
     """Get all stock prices"""
     data = pd.merge(df_price_history, df_equities, on="portid")
 

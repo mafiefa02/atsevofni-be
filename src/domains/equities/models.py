@@ -22,8 +22,3 @@ class EquityFilterParams(BaseModel):
     subsector: (
         Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)] | None
     ) = None
-
-
-class EquityPriceFilterParams(BaseModel):
-    start_date: date | None = None
-    end_date: date | None = None

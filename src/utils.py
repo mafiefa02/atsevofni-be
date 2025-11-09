@@ -1,11 +1,14 @@
 import math
+from typing import List, Optional
 
 import pandas as pd
 
 from .models import SortParams
 
 
-def load_csv_data(filepath: str, parse_dates: list[str] | None = None) -> pd.DataFrame:
+def load_csv_data(
+    filepath: str, parse_dates: Optional[List[str]] = None
+) -> pd.DataFrame:
     """Load respective data from a CSV file into a pandas DataFrame."""
     try:
         df = pd.read_csv(filepath, parse_dates=parse_dates)

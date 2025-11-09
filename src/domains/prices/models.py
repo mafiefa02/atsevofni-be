@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 from pydantic import BaseModel, StringConstraints, model_validator
 
@@ -19,19 +19,18 @@ class Price(BaseModel):
 
 
 class PriceFilterParams(BaseModel):
-    portids: (
+    portids: Optional[
         List[Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)]]
-        | None
-    ) = None
-    sector: (
-        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)] | None
-    ) = None
-    subsector: (
-        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)] | None
-    ) = None
+    ] = None
+    sector: Optional[
+        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)]
+    ] = None
+    subsector: Optional[
+        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)]
+    ] = None
     latest: bool = False
-    start_date: date | None = None
-    end_date: date | None = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
 
     @model_validator(mode="after")
     def check_dates(self):

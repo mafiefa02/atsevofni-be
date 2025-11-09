@@ -1,10 +1,10 @@
-from typing import Annotated, Generic, Literal, TypeVar
+from typing import Annotated, Generic, Literal, Optional, TypeVar
 
 from pydantic import BaseModel, Field
 
 
 class SortParams(BaseModel):
-    sort_by: str | None = None
+    sort_by: Optional[str]
     order: Literal["desc", "asc"] = "desc"
 
 

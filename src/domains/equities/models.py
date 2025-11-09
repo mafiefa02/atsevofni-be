@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 from pydantic import BaseModel, StringConstraints
 
@@ -15,10 +15,12 @@ class Equity(BaseModel):
 
 
 class EquityFilterParams(BaseModel):
-    search: List[Annotated[str, StringConstraints(strip_whitespace=True)]] | None = None
-    sector: (
-        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)] | None
-    ) = None
-    subsector: (
-        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)] | None
-    ) = None
+    search: Optional[List[Annotated[str, StringConstraints(strip_whitespace=True)]]] = (
+        None
+    )
+    sector: Optional[
+        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)]
+    ] = None
+    subsector: Optional[
+        Annotated[str, StringConstraints(to_upper=True, strip_whitespace=True)]
+    ] = None

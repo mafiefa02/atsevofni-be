@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 
-from src.routers import app_router
+from .configs import settings
+from .routers import app_router
 
 app = FastAPI(
-    title="Atsevofni Front End Challenge Backend",
-    description="Welcome to Atsevofni Front End Challenge's backend documentation!",
+    title=f"{settings.app_name}'s Documentation",
+    description=f"Welcome to {settings.app_name}'s documentation page!",
     root_path="/api/v1",
 )
 

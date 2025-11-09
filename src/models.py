@@ -2,6 +2,8 @@ from typing import Annotated, Generic, Literal, Optional, TypeVar
 
 from pydantic import BaseModel, Field
 
+from .configs import settings
+
 T = TypeVar("T")
 
 
@@ -12,7 +14,7 @@ class SortParams(BaseModel):
 
 class PaginationParams(BaseModel):
     page: Annotated[int, Field(ge=1)] = 1
-    limit: Annotated[int, Field(ge=1)] = 50
+    limit: Annotated[int, Field(ge=1)] = settings.default_item_per_page
 
 
 class ResponseMeta(BaseModel):

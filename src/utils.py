@@ -3,9 +3,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 
-from src.models import ResponseMeta
-
-from .models import PaginationParams, SortParams
+from .models import PaginationParams, ResponseMeta, SortParams
 
 
 def load_csv_data(

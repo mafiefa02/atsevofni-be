@@ -24,11 +24,13 @@ uv venv && source .venv/bin/activate
 ```bash
 uv sync
 ```
-4. Run the server!
+4. Rename `.env.example` to `.env.local` and set the desired `API_KEY` to limit unauthorized API access.
+5. Run the server!
 ```bash
 uv run fastapi dev src/main.py
 ```
 
 ## What about deploying it?
 There are many ways to deploy the service, the easiest way is to use the existing `Dockerfile`.
+
 

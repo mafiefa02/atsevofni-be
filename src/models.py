@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class SortParams(BaseModel):
-    sort_by: Optional[str]
+    sort_by: Optional[str] = None
     order: Literal["desc", "asc"] = "desc"
 
 

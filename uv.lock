@@ -41,7 +41,6 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "pandas", extra = ["excel"] },
     { name = "pydantic-settings" },
-    { name = "python-dotenv" },
 ]
 
 [package.metadata]
@@ -49,7 +48,6 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.121.0" },
     { name = "pandas", extras = ["excel"], specifier = ">=2.3.3" },
     { name = "pydantic-settings", specifier = ">=2.11.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
 ]
 
 [[package]]

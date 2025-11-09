@@ -7,7 +7,7 @@ api_key_header = APIKeyHeader(name=settings.api_key_header_name)
 
 
 async def get_api_key(api_key_header: str = Security(api_key_header)):
-    if api_key_header != settings.api_key_header_name:
+    if api_key_header != settings.api_key:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="We could not validate your credentials.",

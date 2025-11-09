@@ -5,8 +5,12 @@ from pydantic import StringConstraints
 
 from src.constants import ExceptionMessages
 from src.loaders import df_equities
-from src.models import PaginatedResponse, PaginationParams, SortParams
-from src.utils import generate_pagination_metadata, get_paginated_data, sort_data
+from src.models import PaginationParams, Response, SortParams
+from src.utils import (
+    get_paginated_data,
+    get_response_meta,
+    sort_data,
+)
 
 from .models import Equity, EquityFilterParams
 from .utils import filter_data
@@ -14,7 +18,7 @@ from .utils import filter_data
 router = APIRouter()
 
 
-@router.get("", response_model=PaginatedResponse[List[Equity]])
+@router.get("", response_model=Response[List[Equity]])
 def get_equities(
     filter_params: Annotated[EquityFilterParams, Query()],
     pagination_params: Annotated[PaginationParams, Depends()],
@@ -32,21 +36,15 @@ def get_equities(
     data = filter_data(data, filter_params)
     data = sort_data(data, sorting_params)
 
-    returned_data = get_paginated_data(
-        data, page=pagination_params.page, limit=pagination_params.limit
-    )
-
-    pagination_metadata = generate_pagination_metadata(
-        data, limit=pagination_params.limit
-    )
+    returned_data = get_paginated_data(data, pagination_params).to_dict("records")
 
     return {
         "data": returned_data,
-        "meta": {**pagination_params.dict(), **pagination_metadata},
+        "meta": get_response_meta(data, pagination_params=pagination_params),
     }
 
 
-@router.get("/{portid}", response_model=Equity)
+@router.get("/{portid}", response_model=Response[Equity])
 def get_equity_by_portid(portid: Annotated[str, StringConstraints(to_upper=True)]):
     """Get detailed equity information by its portid"""
     data = df_equities
@@ -57,7 +55,8 @@ def get_equity_by_portid(portid: Annotated[str, StringConstraints(to_upper=True)
             detail=ExceptionMessages.DATA_LOADING_FAILED,
         )
 
-    returned_data = data[data["portid"] == portid].to_dict(orient="records")
+    data = data[data["portid"] == portid]
+    returned_data = data.to_dict("records")
 
     if not returned_data:
         raise HTTPException(
@@ -65,4 +64,7 @@ def get_equity_by_portid(portid: Annotated[str, StringConstraints(to_upper=True)
             detail=f"Equity with portid '{portid}' not found.",
         )
 
-    return returned_data[0]
+    return {
+        "data": returned_data[0],
+        "meta": get_response_meta(data),
+    }

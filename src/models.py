@@ -2,6 +2,8 @@ from typing import Annotated, Generic, Literal, Optional, TypeVar
 
 from pydantic import BaseModel, Field
 
+T = TypeVar("T")
+
 
 class SortParams(BaseModel):
     sort_by: Optional[str] = None
@@ -13,14 +15,12 @@ class PaginationParams(BaseModel):
     limit: Annotated[int, Field(ge=1)] = 50
 
 
-class PaginationMeta(PaginationParams):
+class ResponseMeta(BaseModel):
+    pagination: Optional[PaginationParams]
     total_items: Annotated[int, Field(ge=0)]
-    total_pages: Annotated[int, Field(ge=0)]
+    total_pages: Annotated[int, Field(ge=1)]
 
 
-T = TypeVar("T")
-
-
-class PaginatedResponse(BaseModel, Generic[T]):
+class Response(BaseModel, Generic[T]):
     data: T
-    meta: PaginationMeta
+    meta: ResponseMeta

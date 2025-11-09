@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from src.constants import ExceptionMessages
 from src.loaders import df_equities, df_price_history
-from src.models import PaginatedResponse, PaginationParams, SortParams
-from src.utils import generate_pagination_metadata, get_paginated_data, sort_data
+from src.models import PaginationParams, Response, SortParams
+from src.utils import get_paginated_data, get_response_meta, sort_data
 
 from .models import Price, PriceFilterParams
 from .utils import filter_data
@@ -14,7 +14,7 @@ from .utils import filter_data
 router = APIRouter()
 
 
-@router.get("", response_model=PaginatedResponse[List[Price]])
+@router.get("", response_model=Response[List[Price]])
 def get_stocks(
     filter_params: Annotated[PriceFilterParams, Query()],
     pagination_params: Annotated[PaginationParams, Depends()],
@@ -32,15 +32,9 @@ def get_stocks(
     data = filter_data(data, filter_params)
     data = sort_data(data, sorting_params)
 
-    returned_data = get_paginated_data(
-        data, page=pagination_params.page, limit=pagination_params.limit
-    )
-
-    pagination_metadata = generate_pagination_metadata(
-        data, limit=pagination_params.limit
-    )
+    returned_data = get_paginated_data(data, pagination_params).to_dict("records")
 
     return {
         "data": returned_data,
-        "meta": {**pagination_params.dict(), **pagination_metadata},
+        "meta": get_response_meta(data, pagination_params=pagination_params),
     }

@@ -1,14 +1,16 @@
 import math
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 
-from .models import SortParams
+from src.models import ResponseMeta
+
+from .models import PaginationParams, SortParams
 
 
 def load_csv_data(
     filepath: str, parse_dates: Optional[List[str]] = None
-) -> pd.DataFrame:
+) -> Optional[pd.DataFrame]:
     """Load respective data from a CSV file into a pandas DataFrame."""
     try:
         df = pd.read_csv(filepath, parse_dates=parse_dates)
@@ -21,18 +23,30 @@ def load_csv_data(
         return None
 
 
-def generate_pagination_metadata(dataframe: pd.DataFrame, limit: int):
+def generate_pagination_metadata(
+    data: Optional[Any],
+    pagination_params: Optional[PaginationParams] = None,
+) -> Dict[str, int]:
     """Generate metadata for pagination."""
-    total_items = len(dataframe)
-    total_pages = math.ceil(total_items / limit)
+    if data is None:
+        return {"total_items": 0, "total_pages": 1}
+
+    total_items = len(data) if isinstance(data, Union[pd.DataFrame, List]) else 1
+    total_pages = (
+        math.ceil(total_items / pagination_params.limit)
+        if pagination_params is not None
+        else 1
+    )
 
     return {"total_items": total_items, "total_pages": total_pages}
 
 
-def get_paginated_data(dataframe: pd.DataFrame, page: int, limit: int) -> pd.DataFrame:
+def get_paginated_data(
+    dataframe: pd.DataFrame, pagination_params: PaginationParams
+) -> pd.DataFrame:
     """Return paginated data for a certain page and limit."""
-    skip = (page - 1) * limit
-    data = dataframe.iloc[skip : skip + limit].to_dict(orient="records")
+    skip = (pagination_params.page - 1) * pagination_params.limit
+    data = dataframe.iloc[skip : skip + pagination_params.limit]
 
     return data
 
@@ -44,3 +58,13 @@ def sort_data(dataframe: pd.DataFrame, sort: SortParams) -> pd.DataFrame:
             by=sort.sort_by, ascending=sort.order == "asc", inplace=False
         )
     return dataframe
+
+
+def get_response_meta(
+    data: Optional[Any], pagination_params: Optional[PaginationParams] = None
+) -> ResponseMeta:
+    pagination_meta = generate_pagination_metadata(data, pagination_params)
+    return {
+        "pagination": pagination_params,
+        **pagination_meta,
+    }

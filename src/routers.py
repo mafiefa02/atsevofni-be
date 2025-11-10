@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from src.domains.equities.routers import router as equities_router
 from src.domains.prices.routers import router as prices_router
 
 from .configs import settings
-from .securities import get_api_key
 
 app_router = APIRouter()
 
@@ -12,13 +11,11 @@ app_router.include_router(
     prices_router,
     prefix="/prices",
     tags=["prices"],
-    dependencies=[Depends(get_api_key)],
 )
 app_router.include_router(
     equities_router,
     prefix="/equities",
     tags=["equities"],
-    dependencies=[Depends(get_api_key)],
 )
 
 

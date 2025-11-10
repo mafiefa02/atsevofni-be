@@ -8,4 +8,5 @@ dependencies = [
     "fastapi[standard]>=0.121.0",
     "pandas[excel]>=2.3.3",
     "pydantic-settings>=2.11.0",
+    "slowapi>=0.1.9",
 ]

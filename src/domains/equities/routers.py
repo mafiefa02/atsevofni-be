@@ -1,10 +1,12 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import StringConstraints
 
+from src.configs import settings
 from src.constants import ExceptionMessages
 from src.loaders import df_equities
+from src.middlewares import rate_limiter
 from src.models import PaginationParams, Response, SortParams
 from src.utils import (
     get_paginated_data,
@@ -19,7 +21,9 @@ router = APIRouter()
 
 
 @router.get("", response_model=Response[List[Equity]])
+@rate_limiter.limit(settings.app_rate_limit)
 def get_equities(
+    request: Request,
     filter_params: Annotated[EquityFilterParams, Query()],
     pagination_params: Annotated[PaginationParams, Depends()],
     sorting_params: Annotated[SortParams, Depends()],
@@ -45,7 +49,10 @@ def get_equities(
 
 
 @router.get("/{portid}", response_model=Response[Equity])
-def get_equity_by_portid(portid: Annotated[str, StringConstraints(to_upper=True)]):
+@rate_limiter.limit(settings.app_rate_limit)
+def get_equity_by_portid(
+    request: Request, portid: Annotated[str, StringConstraints(to_upper=True)]
+):
     """Get detailed equity information by its portid"""
     data = df_equities
 

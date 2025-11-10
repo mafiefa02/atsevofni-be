@@ -1,10 +1,12 @@
 from typing import Annotated, List
 
 import pandas as pd
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
+from src.configs import settings
 from src.constants import ExceptionMessages
 from src.loaders import df_equities, df_price_history
+from src.middlewares import rate_limiter
 from src.models import PaginationParams, Response, SortParams
 from src.utils import get_paginated_data, get_response_meta, sort_data
 
@@ -15,7 +17,9 @@ router = APIRouter()
 
 
 @router.get("", response_model=Response[List[Price]])
+@rate_limiter.limit(settings.app_rate_limit)
 def get_stocks(
+    request: Request,
     filter_params: Annotated[PriceFilterParams, Query()],
     pagination_params: Annotated[PaginationParams, Depends()],
     sorting_params: Annotated[SortParams, Depends()],
